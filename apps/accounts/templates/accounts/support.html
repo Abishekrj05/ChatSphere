@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="support-panel">
+    <a href="{% url 'accounts:profile' %}">← Back to profile</a>
+    {% if support_page == "help" %}
+        <h1>Help &amp; Feedback</h1>
+        <p>Find answers or tell us how ChatSphere can improve.</p>
+        <div class="support-links">
+            <a href="{% url 'accounts:support' 'help-center' %}"><strong>Help center</strong><small>Common questions about accounts, chats and privacy</small></a>
+            <a href="{% url 'accounts:support' 'contact' %}"><strong>Contact us</strong><small>Send feedback or report a problem</small></a>
+            <a href="{% url 'accounts:support' 'terms' %}"><strong>Terms &amp; privacy policy</strong><small>How ChatSphere handles your account and data</small></a>
+        </div>
+    {% elif support_page == "help-center" %}
+        <h1>Help center</h1>
+        <h2>Common help</h2>
+        <p>For connection problems, refresh the chat once and confirm that the development server is running. You can manage privacy, themes and blocked contacts from Profile settings.</p>
+        <p>Messages support text, emoji, images, documents and voice recordings. Use the message menu to reply, react, forward, edit or delete.</p>
+    {% elif support_page == "contact" %}
+        <h1>Contact us</h1>
+        <p>For support or feedback, contact the ChatSphere project administrator. Include the page, what you expected, and a screenshot of the problem.</p>
+    {% elif support_page == "terms" %}
+        <h1>Terms &amp; privacy policy</h1>
+        <p>Use ChatSphere responsibly and do not upload unlawful or harmful content. Your profile details, conversations and uploaded files are stored by the server hosting this application.</p>
+        <p>Conversation access is limited to participants. Account administrators may still have infrastructure-level access needed to operate, secure and maintain the service.</p>
+    {% else %}
+        <h1>App info</h1>
+        <div class="app-info-logo">CS</div>
+        <h2>ChatSphere</h2>
+        <p>Desktop web edition · Version 1.0</p>
+        <p class="muted">Real-time private and group messaging built with Django and Channels.</p>
+    {% endif %}
+</section>
+{% endblock %}

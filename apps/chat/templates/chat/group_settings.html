@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Manage {{ conversation.name }} | ChatSphere{% endblock %}
+{% block content %}
+<div class="search-grid">
+    <section class="panel">
+        <div class="panel-heading">
+            <h1>Manage group</h1>
+            <a href="{% url 'chat:group_room' conversation.id %}">Back to chat</a>
+        </div>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="primary-button" type="submit">Save group</button>
+        </form>
+    </section>
+    <section class="panel danger-zone">
+        <h2>Delete group</h2>
+        <p>Deleting a group permanently removes its messages, attachments, and notifications.</p>
+        <form method="post" action="{% url 'chat:delete_group' conversation.id %}"
+              onsubmit="return confirm('Permanently delete this group?');">
+            {% csrf_token %}
+            <button class="danger-button" type="submit">Delete group</button>
+        </form>
+    </section>
+</div>
+{% endblock %}

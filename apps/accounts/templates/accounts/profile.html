@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Profile | ChatSphere{% endblock %}
+{% block content %}
+<section class="profile-card">
+    <a class="profile-back-link" href="{% url 'chat:dashboard' %}">← Back to chats</a>
+    {% if user.profile.avatar %}
+        <img class="profile-avatar" src="{{ user.profile.avatar.url }}" alt="{{ user.username }}">
+    {% else %}
+        <div class="profile-avatar fallback">{{ user.username|first|upper }}</div>
+    {% endif %}
+        <h1>{{ user.profile.name }}</h1>
+        <p class="muted">@{{ user.username }}</p>
+    <div class="profile-actions">
+        <a class="primary-button" href="{% url 'accounts:edit_profile' %}">Edit profile</a>
+        <a class="secondary-button" href="{% url 'accounts:password_change' %}">Change password</a>
+    </div>
+    <nav class="profile-settings-list" aria-label="Profile settings">
+        <a href="{% url 'accounts:settings' 'privacy' %}">
+            <span><strong>Privacy</strong><small>Blocked contacts and last seen</small></span><b>›</b>
+        </a>
+        <a href="{% url 'accounts:settings' 'chat' %}">
+            <span><strong>Chat</strong><small>Chat theme and wallpaper</small></span><b>›</b>
+        </a>
+        <a href="{% url 'accounts:settings' 'appearance' %}">
+            <span><strong>Appearance</strong><small>App theme</small></span><b>›</b>
+        </a>
+        <a href="{% url 'accounts:support' 'help' %}">
+            <span><strong>Help &amp; Feedback</strong><small>Help center, contact and policies</small></span><b>›</b>
+        </a>
+        <a href="{% url 'accounts:support' 'app-info' %}">
+            <span><strong>App info</strong><small>Version and application details</small></span><b>›</b>
+        </a>
+    </nav>
+</section>
+{% endblock %}

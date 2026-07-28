@@ -1,0 +1,80 @@
+<aside class="conversation-sidebar">
+    <header class="sidebar-toolbar">
+        <a class="current-user" href="{% url 'accounts:profile' %}">
+            {% if user.profile.avatar %}
+                <img class="avatar-image" src="{{ user.profile.avatar.url }}" alt="">
+            {% else %}
+                <span class="avatar">{{ user.profile.name|first|upper }}</span>
+            {% endif %}
+            <span>
+                <strong>{{ user.profile.name }}</strong>
+                <small>{% if user.profile.bio %}{{ user.profile.bio|truncatechars:30 }}{% else %}Available{% endif %}</small>
+            </span>
+        </a>
+        <div class="toolbar-actions">
+            <a href="{% url 'ai_assistant:assistant' %}" title="AI Assistant">{% include "icon.html" with name="sparkles" %}</a>
+            <a class="toolbar-notifications" href="{% url 'notifications:list' %}" title="Notifications">
+                {% include "icon.html" with name="bell" %}
+                <span data-notification-count {% if not unread_notification_count %}hidden{% endif %}>{{ unread_notification_count }}</span>
+            </a>
+            <a href="{% url 'chat:search' %}" title="New conversation">{% include "icon.html" with name="chat" %}</a>
+        </div>
+    </header>
+
+    <form class="conversation-search" action="{% url 'chat:search' %}" method="get">
+        {% include "icon.html" with name="search" %}
+        <input name="q" aria-label="Search conversations" placeholder="Search or start new chat">
+    </form>
+
+    <div class="conversation-filters" role="tablist" aria-label="Filter conversations">
+        <button class="active" type="button" data-conversation-filter="all">All</button>
+        <button type="button" data-conversation-filter="unread">Unread</button>
+        <button type="button" data-conversation-filter="groups">Groups</button>
+        <button type="button" data-conversation-filter="archived">Archived</button>
+    </div>
+
+    <nav class="conversation-list" aria-label="Conversations">
+        {% for card in conversation_cards %}
+            <a class="conversation-item {% if active_conversation_id == card.conversation.id %}active{% endif %}"
+               data-conversation-kind="{% if card.conversation.is_group %}group{% else %}private{% endif %}"
+               data-conversation-id="{{ card.conversation.id }}"
+               data-conversation-title="{{ card.title }}"
+               data-conversation-unread="{% if card.unread_count %}true{% else %}false{% endif %}"
+               data-conversation-archived="{% if card.preference.is_archived %}true{% else %}false{% endif %}"
+               href="{% if card.conversation.is_group %}{% url 'chat:group_room' card.conversation.id %}{% else %}{% url 'chat:room' card.conversation.id %}{% endif %}">
+                <span class="avatar {% if card.conversation.is_group %}group-avatar{% endif %}">
+                    {% if card.conversation.is_group and card.conversation.image %}
+                        <img src="{{ card.conversation.image.url }}" alt="">
+                    {% elif card.other and card.other.profile.avatar %}
+                        <img src="{{ card.other.profile.avatar.url }}" alt="">
+                    {% elif card.conversation.is_group %}G
+                    {% else %}{{ card.title|first|upper }}{% endif %}
+                </span>
+                <span class="conversation-copy">
+                    <span class="conversation-line">
+                        <strong>{{ card.title }}</strong>
+                        {% if card.preference.is_pinned %}<span class="conversation-state" title="Pinned">◆</span>{% endif %}
+                        {% if card.last_message %}<time>{{ card.last_message.created_at|date:"H:i" }}</time>{% endif %}
+                    </span>
+                    <span class="conversation-line preview-line">
+                        <small>
+                            {% if card.last_message %}
+                                {% if card.last_message.sender_id == user.id %}You: {% endif %}
+                                {% if card.last_message.is_deleted %}Message deleted
+                                {% elif card.last_message.content %}{{ card.last_message.content|truncatechars:36 }}
+                                {% else %}Attachment{% endif %}
+                            {% else %}Start a conversation{% endif %}
+                        </small>
+                        {% if card.preference.is_muted %}<span class="conversation-state" title="Muted">⌁</span>{% endif %}
+                        {% if card.unread_count %}<span class="unread-badge">{{ card.unread_count }}</span>{% endif %}
+                    </span>
+                </span>
+            </a>
+        {% empty %}
+            <div class="empty-conversations">
+                <p>No conversations yet.</p>
+                <a class="primary-button" href="{% url 'chat:search' %}">Start a chat</a>
+            </div>
+        {% endfor %}
+    </nav>
+</aside>

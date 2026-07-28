@@ -1,0 +1,7 @@
+<aside class="sidebar">
+    <h2>{% include "icon.html" with name="chat" %} ChatSphere</h2>
+    <a href="{% url 'chat:dashboard' %}">{% include "icon.html" with name="chat" %}<span>Conversations</span></a>
+    <a href="{% url 'chat:search' %}">{% include "icon.html" with name="search" %}<span>Find users</span></a>
+    <a href="{% url 'ai_assistant:assistant' %}">{% include "icon.html" with name="sparkles" %}<span>AI Assistant</span></a>
+    <a href="{% url 'accounts:profile' %}">{% include "icon.html" with name="user" %}<span>Profile</span></a>
+</aside>

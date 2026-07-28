@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="settings-layout">
+    <aside class="settings-nav">
+        <a href="{% url 'accounts:profile' %}">← Profile</a>
+        {% if section == "privacy" %}<h1>Privacy</h1>
+        {% elif section == "chat" %}<h1>Chat</h1>
+        {% else %}<h1>Appearance</h1>{% endif %}
+    </aside>
+    <section class="settings-panel">
+        {% if section == "privacy" %}
+            <h2>Privacy</h2>
+            <p class="muted">Control who can see your activity and manage blocked contacts.</p>
+        {% elif section == "chat" %}
+            <h2>Chat preferences</h2>
+            <p class="muted">Personalize conversation colors and wallpaper.</p>
+        {% else %}
+            <h2>Appearance</h2>
+            <p class="muted">Choose how ChatSphere looks throughout the app.</p>
+        {% endif %}
+        <form method="post" enctype="multipart/form-data" class="settings-form">{% csrf_token %}{{ form.as_p }}
+            {% if section == "chat" and user.profile.custom_chat_wallpaper %}
+                <div class="wallpaper-preview">
+                    <img src="{{ user.profile.custom_chat_wallpaper.url }}" alt="Current custom wallpaper">
+                    <small>Current custom wallpaper</small>
+                </div>
+            {% endif %}
+            <button class="primary-button" type="submit">Save settings</button>
+        </form>
+        {% if section == "privacy" %}
+            <div class="blocked-section">
+                <h3>Blocked contacts</h3>
+                {% for person in blocked_users %}
+                    <div class="blocked-contact">
+                        <span class="avatar">{{ person.profile.name|first|upper }}</span>
+                        <span><strong>{{ person.profile.name }}</strong><small>@{{ person.username }}</small></span>
+                        <form method="post" action="{% url 'accounts:unblock_user' person.id %}">
+                            {% csrf_token %}<button class="secondary-button" type="submit">Unblock</button>
+                        </form>
+                    </div>
+                {% empty %}
+                    <p class="muted">You have no blocked contacts.</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

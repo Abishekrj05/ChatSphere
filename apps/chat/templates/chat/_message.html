@@ -1,0 +1,65 @@
+<article class="chat-message {% if message.sender_id == user.id %}mine{% endif %}{% if message.is_deleted %} deleted{% endif %}"
+         data-message-id="{{ message.id }}" data-sender="{{ message.sender.profile.name }}"
+         data-content="{{ message.content }}">
+    {% if show_sender and message.sender_id != user.id %}<strong class="message-sender">{{ message.sender.profile.name }}</strong>{% endif %}
+    {% if message.forwarded_from_id %}<span class="forwarded-label">↪ Forwarded</span>{% endif %}
+    {% if message.reply_to %}
+        <blockquote class="reply-context"><strong>{{ message.reply_to.sender.profile.name }}</strong>
+            {{ message.reply_to.content|truncatechars:100 }}</blockquote>
+    {% endif %}
+    <div class="message-content">{% if message.is_deleted %}<em>Message deleted</em>{% else %}{{ message.content }}{% endif %}</div>
+    {% if not message.is_deleted %}
+        {% if message.image %}<a href="{{ message.image.url }}" target="_blank"><img src="{{ message.image.url }}" alt="Shared image"></a>{% endif %}
+        {% if message.document %}
+            <a class="document-card" href="{{ message.document.url }}" target="_blank" rel="noopener">
+                <span class="document-icon">{% include "icon.html" with name="paperclip" %}</span>
+                <span><strong>{{ message.document.name|cut:"documents/"|truncatechars:34 }}</strong><small>Document</small></span>
+            </a>
+        {% endif %}
+        {% if message.voice_note %}<audio controls preload="metadata" src="{{ message.voice_note.url }}"></audio>{% endif %}
+    {% endif %}
+    <div class="reaction-summary">
+        {% regroup message.reactions.all by emoji as reaction_groups %}
+        {% for reaction in reaction_groups %}<span>{{ reaction.grouper }} {{ reaction.list|length }}</span>{% endfor %}
+    </div>
+    <footer class="message-meta">
+        {% if message.pinned_at %}<span class="pin-indicator">Pinned</span>{% endif %}
+        <small>{{ message.created_at|date:"H:i" }}
+            {% if message.edited_at and not message.is_deleted %} · edited{% endif %}
+            {% if message.sender_id == user.id and not message.is_deleted %}
+                <span class="read-tick {% if message.is_read %}read{% endif %}"
+                      data-message-status="{{ message.id }}"
+                      title="{% if message.is_read %}Read{% elif message.delivered_at %}Delivered{% else %}Sent{% endif %}">
+                    {% if message.is_read or message.delivered_at %}✓✓{% else %}✓{% endif %}
+                </span>
+            {% endif %}
+        </small>
+    </footer>
+    {% if not message.is_deleted %}
+        <details class="message-menu">
+            <summary aria-label="Message actions">⌄</summary>
+            <div class="message-menu-popover">
+                <button type="button" data-message-action="reply">Reply</button>
+                <button type="button" data-message-action="copy">Copy</button>
+                <button type="button" data-message-action="forward">Forward</button>
+                <button type="button" data-message-action="pin">{% if message.pinned_at %}Unpin{% else %}Pin{% endif %}</button>
+                {% if message.sender_id == user.id %}
+                    <button type="button" data-message-action="info">Message info</button>
+                    <button type="button" data-message-action="edit">Edit</button>
+                {% endif %}
+                <button class="destructive-action" type="button" data-message-action="delete">Delete</button>
+            </div>
+        </details>
+        <div class="quick-reaction">
+            <button type="button" data-reaction-toggle aria-label="React to message">☺</button>
+            <div class="quick-reaction-tray">
+                <button type="button" data-message-action="react" data-emoji="👍">👍</button>
+                <button type="button" data-message-action="react" data-emoji="❤️">❤️</button>
+                <button type="button" data-message-action="react" data-emoji="😂">😂</button>
+                <button type="button" data-message-action="react" data-emoji="😮">😮</button>
+                <button type="button" data-message-action="react" data-emoji="😢">😢</button>
+                <button type="button" data-message-action="react" data-emoji="🙏">🙏</button>
+            </div>
+        </div>
+    {% endif %}
+</article>

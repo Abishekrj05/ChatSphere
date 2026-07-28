@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Search | ChatSphere{% endblock %}
+{% block content %}
+<div class="search-grid">
+    <section class="panel">
+        <div class="panel-heading"><h1>Search users</h1><a href="{% url 'chat:dashboard' %}">Back to chats</a></div>
+        <form method="get" class="search-form">
+            <input name="q" value="{{ query }}" placeholder="Username or email">
+            <button class="primary-button" type="submit">Search</button>
+        </form>
+
+        {% for person in users %}
+            <a class="conversation-row"
+               href="{% url 'chat:start_private_chat' person.username %}">
+                <span class="avatar">{{ person.username|first|upper }}</span>
+                <span class="conversation-info">
+                    <strong>{{ person.profile.name }}</strong>
+                    <small>{{ person.email }}</small>
+                </span>
+            </a>
+        {% empty %}
+            {% if query %}<p class="muted">No matching users found.</p>{% endif %}
+        {% endfor %}
+    </section>
+
+    {% if matching_messages %}
+    <section class="panel">
+        <h1>Messages</h1>
+        {% for message in matching_messages %}
+            <a class="conversation-row"
+               href="{% if message.conversation.is_group %}{% url 'chat:group_room' message.conversation.id %}{% else %}{% url 'chat:room' message.conversation.id %}{% endif %}">
+                <span class="avatar">{{ message.sender.username|first|upper }}</span>
+                <span class="conversation-info">
+                    <strong>{{ message.sender.profile.name }}</strong>
+                    <small>{{ message.content|truncatechars:80 }}</small>
+                </span>
+            </a>
+        {% endfor %}
+    </section>
+    {% endif %}
+
+    <section class="panel">
+        <h1>Create group</h1>
+        <form method="post" action="{% url 'chat:create_group' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ group_form.as_p }}
+            <button class="primary-button" type="submit">Create group</button>
+        </form>
+    </section>
+</div>
+{% endblock %}

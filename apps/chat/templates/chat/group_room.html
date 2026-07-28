@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ conversation.name }}{% endblock %}
+{% block body_class %}messenger-page{% endblock %}
+{% block content %}
+<div class="messenger-layout">
+{% include "chat/_conversation_list.html" %}
+<section class="chat-shell">
+    <header class="chat-header">
+        <a class="mobile-back" href="{% url 'chat:dashboard' %}" aria-label="Back">{% include "icon.html" with name="arrow-left" %}</a>
+        <span class="avatar chat-avatar group-avatar">
+            {% if conversation.image %}<img src="{{ conversation.image.url }}" alt="">
+            {% else %}G{% endif %}
+        </span>
+        <div>
+            <strong>{{ conversation.name }}</strong>
+            <small>{{ participant_names }}</small>
+        </div>
+        <div class="chat-header-actions">
+            {% if conversation.created_by_id == user.id %}
+                <a class="secondary-button" href="{% url 'chat:group_settings' conversation.id %}">Manage group</a>
+            {% else %}
+                <form method="post" action="{% url 'chat:leave_group' conversation.id %}"
+                      onsubmit="return confirm('Leave this group?');">
+                    {% csrf_token %}
+                    <button class="secondary-button" type="submit">Leave group</button>
+                </form>
+            {% endif %}
+        </div>
+        <div class="chat-header-tools">
+            <button id="chat-search-toggle" type="button" title="Search this group" aria-label="Search this group">
+                {% include "icon.html" with name="search" %}
+            </button>
+            <details class="chat-menu">
+                <summary aria-label="Group menu">•••</summary>
+                <div>
+                    <button type="button" data-conversation-action="pin">{% if active_preference.is_pinned %}Unpin group{% else %}Pin group{% endif %}</button>
+                    <button type="button" data-conversation-action="mute">{% if active_preference.is_muted %}Unmute notifications{% else %}Mute notifications{% endif %}</button>
+                    <button type="button" data-conversation-action="unread">Mark unread</button>
+                    <button type="button" data-conversation-action="archive">{% if active_preference.is_archived %}Unarchive group{% else %}Archive group{% endif %}</button>
+                    <button type="button" data-conversation-action="clear">Clear messages</button>
+                    {% if invite_url %}<button type="button" data-copy-invite="{{ invite_url }}">Copy invite link</button>{% endif %}
+                </div>
+            </details>
+        </div>
+    </header>
+
+    <div id="chat-search-panel" class="chat-search-panel" hidden>
+        {% include "icon.html" with name="search" %}
+        <input id="chat-search-input" type="search" placeholder="Search messages in this group">
+        <span id="chat-search-count"></span>
+        <button id="chat-search-close" type="button" aria-label="Close search">&times;</button>
+    </div>
+
+    {% if pinned_message %}
+        <button class="pinned-message-banner" type="button" data-jump-message="{{ pinned_message.id }}">
+            <span class="pinned-symbol">◆</span>
+            <span><strong>Pinned message</strong><small>{{ pinned_message.sender.profile.name }}: {{ pinned_message.content|truncatechars:90 }}</small></span>
+        </button>
+    {% endif %}
+
+    <div id="message-list" class="message-list">
+        <div class="chat-security-note">
+            <span>◆</span>
+            Only members of this group can view its messages.
+        </div>
+        {% for message in chat_messages %}
+            {% ifchanged message.created_at|date:"Y-m-d" %}
+                <div class="date-divider"><span>{{ message.created_at|date:"D, M j" }}</span></div>
+            {% endifchanged %}
+            {% include "chat/_message.html" with show_sender=True %}
+        {% empty %}
+            <div class="conversation-empty-state">
+                <span class="avatar group-avatar">G</span>
+                <strong>{{ conversation.name }} is ready</strong>
+                <small>Send the first message to start the group conversation.</small>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="emoji-bar" id="emoji-bar"></div>
+    <div id="message-error" class="form-error" role="alert"></div>
+    <div id="reply-preview" class="reply-preview" hidden>
+        <span></span><button type="button" aria-label="Cancel reply">&times;</button>
+    </div>
+    <form id="message-form" class="message-form" enctype="multipart/form-data"
+          data-upload-url="{% url 'chat:send_attachment' conversation.id %}">
+        {% csrf_token %}
+        <button type="button" id="emoji-button" class="secondary-button" aria-label="Choose emoji">😊</button>
+        <label class="attachment-button" title="Attach image">{% include "icon.html" with name="image" %}
+            <input type="file" name="image" accept="image/*">
+        </label>
+        <label class="attachment-button" title="Attach document">{% include "icon.html" with name="paperclip" %}
+            <input type="file" name="document">
+        </label>
+        <label class="attachment-button" title="Attach audio">{% include "icon.html" with name="mic" %}
+            <input type="file" name="voice_note" accept="audio/*">
+        </label>
+        <button type="button" id="voice-record-button" class="secondary-button" title="Record voice message" aria-label="Record voice message">●</button>
+        <textarea id="message-input" name="content" maxlength="4000" rows="1"
+                  autocomplete="off" placeholder="Type a group message..."></textarea>
+        <button class="primary-button icon-label" type="submit">{% include "icon.html" with name="send" %}<span>Send</span></button>
+    </form>
+    <div id="upload-progress" class="upload-progress" hidden><span></span><strong>Uploading…</strong></div>
+</section>
+</div>
+
+{{ conversation.id|json_script:"conversation-id" }}
+{{ user.id|json_script:"current-user-id" }}
+{% endblock %}
+
+{% block scripts %}
+<script>document.body.dataset.groupChat = "true";</script>
+<script src="{% static 'js/chat.js' %}?v=20260728-17"></script>
+<script src="{% static 'js/typing.js' %}?v=20260727-3"></script>
+<script src="{% static 'js/emoji.js' %}?v=20260728-1"></script>
+<script src="{% static 'js/chat-extras.js' %}?v=20260728-3"></script>
+{% endblock %}

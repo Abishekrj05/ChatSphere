@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Chats | ChatSphere{% endblock %}
+{% block body_class %}messenger-page{% endblock %}
+{% block content %}
+<div class="messenger-layout">
+    {% include "chat/_conversation_list.html" %}
+    <section class="empty-chat-panel">
+        <div class="empty-chat-illustration" aria-hidden="true">
+            {% include "icon.html" with name="chat" %}
+        </div>
+        <h1>ChatSphere Web</h1>
+        <p>Send messages, share files, and stay connected with your conversations.</p>
+        <p class="secure-note">Private conversations are only visible to their participants.</p>
+    </section>
+</div>
+{% endblock %}

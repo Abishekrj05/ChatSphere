@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}ChatSphere | Connect naturally{% endblock %}
+{% block body_class %}welcome-page{% endblock %}
+{% block content %}
+<section class="welcome-hero">
+    <div class="welcome-copy">
+        <img class="welcome-brand-mark" src="{% static 'images/chatsphere-logo.png' %}" alt="">
+        <span class="eyebrow">Simple. Private. Connected.</span>
+        <h1>Conversations that feel effortless.</h1>
+        <p class="welcome-lead">
+            ChatSphere brings private chats, groups, file sharing, reactions,
+            notifications and an AI assistant together in one modern messenger.
+        </p>
+        <div class="welcome-actions">
+            <a class="welcome-primary" href="{% url 'accounts:register' %}">
+                Create free account
+                <span aria-hidden="true">&rarr;</span>
+            </a>
+            <a class="welcome-secondary" href="{% url 'accounts:login' %}">
+                Sign in
+            </a>
+        </div>
+        <div class="welcome-trust">
+            <span><b>✓</b> Real-time messaging</span>
+            <span><b>✓</b> Private conversations</span>
+            <span><b>✓</b> Works on every screen</span>
+        </div>
+    </div>
+
+    <div class="welcome-preview" aria-label="ChatSphere conversation preview">
+        <div class="preview-window">
+            <header class="preview-header">
+                <span class="preview-avatar">A</span>
+                <span><strong>Abishek</strong><small>online</small></span>
+                <span class="preview-dots">•••</span>
+            </header>
+            <div class="preview-messages">
+                <div class="preview-bubble incoming">Hey! Are we ready to launch?<time>10:24</time></div>
+                <div class="preview-bubble outgoing">Everything is looking great 🎉<time>10:25 ✓✓</time></div>
+                <div class="preview-bubble incoming">Perfect. I’ll share the files here.<time>10:25</time></div>
+            </div>
+            <footer class="preview-composer">
+                <span>＋</span><span class="preview-input">Type a message</span><span class="preview-send">➤</span>
+            </footer>
+        </div>
+    </div>
+</section>
+
+<section class="welcome-features" aria-labelledby="features-title">
+    <div class="section-heading">
+        <span class="eyebrow">Everything you need</span>
+        <h2 id="features-title">More than just messages</h2>
+    </div>
+    <div class="feature-grid">
+        <article>
+            <span class="feature-icon">{% include "icon.html" with name="chat" %}</span>
+            <h3>Private & group chat</h3>
+            <p>Talk one-to-one or bring your whole team together in organized group conversations.</p>
+        </article>
+        <article>
+            <span class="feature-icon">{% include "icon.html" with name="paperclip" %}</span>
+            <h3>Share what matters</h3>
+            <p>Send images, documents and voice notes without leaving the conversation.</p>
+        </article>
+        <article>
+            <span class="feature-icon">{% include "icon.html" with name="sparkles" %}</span>
+            <h3>Built-in AI assistant</h3>
+            <p>Get concise help and useful answers from your assistant whenever you need them.</p>
+        </article>
+    </div>
+</section>
+
+<section class="welcome-cta">
+    <div>
+        <h2>Ready to start a conversation?</h2>
+        <p>Create your account and connect in minutes.</p>
+    </div>
+    <a class="welcome-primary" href="{% url 'accounts:register' %}">Get started</a>
+</section>
+{% endblock %}

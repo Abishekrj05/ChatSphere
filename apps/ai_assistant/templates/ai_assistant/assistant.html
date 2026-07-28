@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}AI Assistant | ChatSphere{% endblock %}
+{% block body_class %}ai-page{% endblock %}
+{% block content %}
+<div class="ai-workspace">
+    <aside class="ai-sidebar">
+        <a class="ai-back" href="{% url 'chat:dashboard' %}">
+            {% include "icon.html" with name="arrow-left" %}<span>Back to chats</span>
+        </a>
+        <div class="ai-brand">
+            <div class="ai-brand-icon">{% include "icon.html" with name="sparkles" %}</div>
+            <span class="eyebrow">ChatSphere intelligence</span>
+            <h1>Your AI Assistant</h1>
+            <p>Brainstorm ideas, explain difficult topics, improve writing, and get quick help without leaving your messenger.</p>
+        </div>
+        <div class="ai-capabilities">
+            <span>{% include "icon.html" with name="chat" %} Natural conversation</span>
+            <span>{% include "icon.html" with name="sparkles" %} Context-aware replies</span>
+            <span>{% include "icon.html" with name="paperclip" %} Concise, useful answers</span>
+        </div>
+        <p class="ai-disclaimer">AI can make mistakes. Verify important information.</p>
+    </aside>
+
+    <section class="ai-chat-shell">
+        <header class="ai-chat-header">
+            <div class="ai-avatar">{% include "icon.html" with name="sparkles" %}</div>
+            <div>
+                <strong>ChatSphere AI</strong>
+                <small><span class="online-dot"></span> Ready to help</small>
+            </div>
+            <button id="clear-ai-chat" class="ai-clear-button" type="button">Clear chat</button>
+        </header>
+
+        <div id="ai-message-list" class="ai-message-list" aria-live="polite">
+            <div id="ai-welcome" class="ai-welcome">
+                <div class="ai-welcome-icon">{% include "icon.html" with name="sparkles" %}</div>
+                <h2>How can I help today?</h2>
+                <p>Choose a suggestion or ask anything in your own words.</p>
+                <div class="ai-suggestions">
+                    <button type="button" data-ai-prompt="Help me plan my tasks for today">
+                        <strong>Plan my day</strong><span>Turn my priorities into a simple action plan</span>
+                    </button>
+                    <button type="button" data-ai-prompt="Explain a difficult concept in simple language">
+                        <strong>Explain something</strong><span>Break down a complex topic clearly</span>
+                    </button>
+                    <button type="button" data-ai-prompt="Help me improve a professional message">
+                        <strong>Improve my writing</strong><span>Make a message clear and professional</span>
+                    </button>
+                    <button type="button" data-ai-prompt="Give me creative ideas for a new project">
+                        <strong>Brainstorm ideas</strong><span>Explore useful and creative possibilities</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="ai-error" class="ai-error" role="alert"></div>
+        <form id="ai-form" class="ai-composer"
+              data-endpoint="{% url 'ai_assistant:generate' %}">
+            {% csrf_token %}
+            <div class="ai-input-wrap">
+                <textarea id="ai-input" maxlength="4000" rows="1"
+                          autocomplete="off" placeholder="Message ChatSphere AI"></textarea>
+                <button class="ai-send-button" type="submit" aria-label="Send message">
+                    {% include "icon.html" with name="send" %}
+                </button>
+            </div>
+            <small>Press Enter to send · Shift+Enter for a new line</small>
+        </form>
+    </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/ai-assistant.js' %}?v=20260727-7"></script>
+{% endblock %}

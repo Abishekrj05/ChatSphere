@@ -1,0 +1,33 @@
+{% load static %}
+<header class="topbar">
+    <a class="brand" href="{% if user.is_authenticated %}{% url 'chat:dashboard' %}{% else %}{% url 'chat:welcome' %}{% endif %}">
+        <img src="{% static 'images/chatsphere-logo.png' %}" alt="ChatSphere logo" width="38" height="38">
+        <span>ChatSphere</span>
+    </a>
+    {% if user.is_authenticated or request.resolver_match.url_name != "welcome" and request.resolver_match.url_name != "login" and request.resolver_match.url_name != "register" %}
+    <nav class="nav-links">
+        {% if user.is_authenticated %}
+            <a class="{% if request.resolver_match.url_name == 'search' %}active{% endif %}" href="{% url 'chat:search' %}">{% include "icon.html" with name="search" %}<span>Search</span></a>
+            <a class="{% if request.resolver_match.namespace == 'ai_assistant' %}active{% endif %}" href="{% url 'ai_assistant:assistant' %}">{% include "icon.html" with name="sparkles" %}<span>AI Assistant</span></a>
+            {% if request.resolver_match.namespace != "accounts" %}
+                <a href="{% url 'accounts:profile' %}">{% include "icon.html" with name="user" %}<span>{{ user.profile.name }}</span></a>
+            {% endif %}
+            <a class="{% if request.resolver_match.namespace == 'notifications' %}active{% endif %}" href="{% url 'notifications:list' %}" aria-label="Notifications">
+                {% include "icon.html" with name="bell" %}<span>Notifications</span>
+                <span class="notification-badge" id="notification-count" data-notification-count
+                      {% if not unread_notification_count %}hidden{% endif %}>
+                    {{ unread_notification_count }}
+                </span>
+            </a>
+            <form method="post" action="{% url 'accounts:logout' %}" class="inline-form"
+                  onsubmit="return confirm('Sign out of ChatSphere?');">
+                {% csrf_token %}
+                <button class="link-button icon-label" type="submit">{% include "icon.html" with name="logout" %}<span>Sign out</span></button>
+            </form>
+        {% else %}
+            <a href="{% url 'accounts:login' %}">Login</a>
+            <a href="{% url 'accounts:register' %}">Register</a>
+        {% endif %}
+    </nav>
+    {% endif %}
+</header>

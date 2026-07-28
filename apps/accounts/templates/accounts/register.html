@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Create account | ChatSphere{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+{% block content %}
+<div class="auth-layout">
+    <section class="auth-card auth-card-wide" aria-labelledby="register-title">
+        <div class="auth-heading">
+            <img src="{% static 'images/chatsphere-logo.png' %}" alt="" width="54" height="54">
+            <span class="auth-eyebrow">Join ChatSphere</span>
+            <h1 id="register-title">Create your account</h1>
+            <p>Set up your profile and start chatting securely.</p>
+        </div>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% if form.non_field_errors %}<div class="auth-form-error" role="alert">{{ form.non_field_errors|striptags }}</div>{% endif %}
+            {% for field in form %}
+                <div class="auth-field">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {% if field.name == "password1" or field.name == "password2" %}
+                        <div class="password-field">{{ field }}<button type="button" data-password-toggle aria-label="Show password">Show</button></div>
+                    {% else %}{{ field }}{% endif %}
+                    {% if field.help_text %}<small class="field-help">{{ field.help_text|safe }}</small>{% endif %}
+                    {% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+                </div>
+            {% endfor %}
+            <button class="primary-button auth-primary" type="submit">Create account</button>
+        </form>
+        <p class="auth-switch">Already have an account? <a href="{% url 'accounts:login' %}">Sign in</a></p>
+    </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/auth.js' %}?v=20260728-1"></script>{% endblock %}

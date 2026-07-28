@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Notifications | ChatSphere{% endblock %}
+{% block content %}
+<section class="panel notification-panel">
+    <div class="panel-heading">
+        <div><a class="section-back-link" href="{% url 'chat:dashboard' %}">← Chats</a><h1>Notifications</h1></div>
+        <form method="post" action="{% url 'notifications:mark_all_read' %}">
+            {% csrf_token %}
+            <button type="submit" class="secondary-button">Mark all read</button>
+        </form>
+    </div>
+    {% for notification in notifications %}
+        <a class="notification-row {% if not notification.is_read %}unread{% endif %}"
+           href="{% url 'notifications:open' notification.id %}">
+            <strong>{{ notification.title }}</strong>
+            <span>{{ notification.message }}</span>
+            <small>{{ notification.created_at|timesince }} ago</small>
+        </a>
+    {% empty %}
+        <p class="muted">You have no notifications.</p>
+    {% endfor %}
+</section>
+{% endblock %}

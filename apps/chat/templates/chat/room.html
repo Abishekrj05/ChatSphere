@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Chat with {{ other_user.profile.name }}{% endblock %}
+{% block body_class %}messenger-page{% endblock %}
+{% block content %}
+<div class="messenger-layout">
+{% include "chat/_conversation_list.html" %}
+<section class="chat-shell">
+    <header class="chat-header">
+        <a class="mobile-back" href="{% url 'chat:dashboard' %}" aria-label="Back">{% include "icon.html" with name="arrow-left" %}</a>
+        <span class="avatar chat-avatar">
+            {% if other_user.profile.avatar %}<img src="{{ other_user.profile.avatar.url }}" alt="">
+            {% else %}{{ other_user.profile.name|first|upper }}{% endif %}
+        </span>
+        <div>
+            <strong>{{ other_user.profile.name }}</strong>
+            <small id="typing-status">
+                {% if can_view_presence and other_user.profile.is_online %}online
+                {% elif can_view_presence and other_user.profile.last_seen %}last seen {{ other_user.profile.last_seen|timesince }} ago
+                {% else %}available{% endif %}
+            </small>
+        </div>
+        <div class="chat-header-tools">
+            <button id="chat-search-toggle" type="button" title="Search this chat" aria-label="Search this chat">
+                {% include "icon.html" with name="search" %}
+            </button>
+            <details class="chat-menu">
+                <summary aria-label="Conversation menu">•••</summary>
+                <div>
+                    <button type="button" data-conversation-action="pin">{% if active_preference.is_pinned %}Unpin chat{% else %}Pin chat{% endif %}</button>
+                    <button type="button" data-conversation-action="mute">{% if active_preference.is_muted %}Unmute notifications{% else %}Mute notifications{% endif %}</button>
+                    <button type="button" data-conversation-action="unread">Mark unread</button>
+                    <button type="button" data-conversation-action="archive">{% if active_preference.is_archived %}Unarchive chat{% else %}Archive chat{% endif %}</button>
+                    <button type="button" data-conversation-action="clear">Clear chat</button>
+                    <button class="destructive-action" type="button" data-conversation-action="block">Block/unblock user</button>
+                </div>
+            </details>
+        </div>
+    </header>
+
+    <div id="chat-search-panel" class="chat-search-panel" hidden>
+        {% include "icon.html" with name="search" %}
+        <input id="chat-search-input" type="search" placeholder="Search messages in this chat">
+        <span id="chat-search-count"></span>
+        <button id="chat-search-close" type="button" aria-label="Close search">&times;</button>
+    </div>
+
+    {% if pinned_message %}
+        <button class="pinned-message-banner" type="button" data-jump-message="{{ pinned_message.id }}">
+            <span class="pinned-symbol">◆</span>
+            <span><strong>Pinned message</strong><small>{{ pinned_message.sender.profile.name }}: {{ pinned_message.content|truncatechars:90 }}</small></span>
+        </button>
+    {% endif %}
+
+    <div id="message-list" class="message-list">
+        <div class="chat-security-note">
+            <span>◆</span>
+            Messages are private and visible only to conversation participants.
+        </div>
+        {% for message in chat_messages %}
+            {% ifchanged message.created_at|date:"Y-m-d" %}
+                <div class="date-divider"><span>{{ message.created_at|date:"D, M j" }}</span></div>
+            {% endifchanged %}
+            {% include "chat/_message.html" with show_sender=False %}
+        {% empty %}
+            <div class="conversation-empty-state">
+                <span class="avatar">{{ other_user.profile.name|first|upper }}</span>
+                <strong>Start a conversation with {{ other_user.profile.name }}</strong>
+                <small>Messages you send will appear here.</small>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="emoji-bar" id="emoji-bar"></div>
+
+    <div id="message-error" class="form-error" role="alert"></div>
+    <div id="reply-preview" class="reply-preview" hidden>
+        <span></span><button type="button" aria-label="Cancel reply">&times;</button>
+    </div>
+    <form id="message-form" class="message-form" enctype="multipart/form-data"
+          data-upload-url="{% url 'chat:send_attachment' conversation.id %}">
+        {% csrf_token %}
+        <button type="button" id="emoji-button" class="secondary-button" aria-label="Choose emoji">😊</button>
+        <label class="attachment-button" title="Attach image">{% include "icon.html" with name="image" %}
+            <input type="file" name="image" accept="image/*">
+        </label>
+        <label class="attachment-button" title="Attach document">{% include "icon.html" with name="paperclip" %}
+            <input type="file" name="document">
+        </label>
+        <label class="attachment-button" title="Attach audio">{% include "icon.html" with name="mic" %}
+            <input type="file" name="voice_note" accept="audio/*">
+        </label>
+        <button type="button" id="voice-record-button" class="secondary-button" title="Record voice message" aria-label="Record voice message">●</button>
+        <textarea id="message-input" name="content" maxlength="4000" rows="1"
+                  autocomplete="off" placeholder="Type a message..."></textarea>
+        <button class="primary-button icon-label" type="submit">{% include "icon.html" with name="send" %}<span>Send</span></button>
+    </form>
+    <div id="upload-progress" class="upload-progress" hidden><span></span><strong>Uploading…</strong></div>
+</section>
+</div>
+
+{{ conversation.id|json_script:"conversation-id" }}
+{{ user.id|json_script:"current-user-id" }}
+{{ can_view_presence|json_script:"presence-visible" }}
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/chat.js' %}?v=20260728-17"></script>
+<script src="{% static 'js/typing.js' %}?v=20260727-3"></script>
+<script src="{% static 'js/emoji.js' %}?v=20260728-1"></script>
+<script src="{% static 'js/chat-extras.js' %}?v=20260728-3"></script>
+{% endblock %}

@@ -1,0 +1,14 @@
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+db.sqlite3
+.env
+media/profiles/*
+media/chat_images/*
+media/documents/*
+media/voice_notes/*
+!media/**/.gitkeep
+staticfiles/
+.idea/
+.vscode/

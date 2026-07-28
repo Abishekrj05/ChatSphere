@@ -1,0 +1,44 @@
+@media (max-width: 920px) {
+    .page-container { width: 100%; margin: 0; }
+    .messenger-layout { height: 100vh; min-height: 0; border-radius: 0; }
+    .nav-links > a span:not(.notification-badge), .link-button span { display: none; }
+    .nav-links { gap: 13px; }
+    .search-grid { grid-template-columns: 1fr; padding: 18px; }
+    .welcome-hero { grid-template-columns: 1fr; padding-top: 45px; text-align: center; }
+    .welcome-copy h1, .welcome-lead { margin-left: auto; margin-right: auto; }
+    .welcome-actions, .welcome-trust { justify-content: center; }
+    .welcome-preview { width: min(560px, 100%); margin: auto; }
+    .feature-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+    body { background: #fff; }
+    .topbar { min-height: 56px; padding: 0 14px; }
+    .brand { font-size: 1rem; }
+    .brand img { width: 30px; height: 30px; }
+    .messenger-layout { height: 100vh; display: block; }
+    .conversation-sidebar { height: 100%; border: 0; }
+    .messenger-layout > .chat-shell { height: 100%; }
+    .messenger-layout:has(> .chat-shell) .conversation-sidebar { display: none; }
+    .empty-chat-panel { display: none; }
+    .mobile-back { width: 28px; display: grid; place-items: center; }
+    .message-list { padding: 15px 12px; }
+    .chat-message { min-width: 52px; max-width: 82%; }
+    .chat-header-actions .secondary-button { font-size: 0; }
+    .chat-header-actions .secondary-button::after { content: "⋮"; font-size: 1.3rem; }
+    .message-form { gap: 4px; padding: 8px; }
+    .attachment-button { width: 30px; }
+    .message-form .primary-button { width: 39px; height: 39px; }
+    .conversation-filters { overflow-x: auto; }
+    .chat-message .message-menu summary { opacity: 1; }
+    .welcome-page .page-container { width: min(100% - 30px, 620px); }
+    .welcome-page .nav-links a span { display: inline !important; }
+    .welcome-copy h1 { font-size: clamp(2.8rem, 14vw, 4.4rem); }
+    .welcome-hero { min-height: auto; padding: 50px 0 70px; }
+    .welcome-actions { flex-direction: column; }
+    .welcome-primary, .welcome-secondary { width: 100%; }
+    .welcome-trust { flex-direction: column; gap: 8px; }
+    .preview-messages { min-height: 310px; padding: 32px 16px; }
+    .welcome-features { padding: 70px 0; }
+    .welcome-cta { padding: 32px 24px; flex-direction: column; text-align: center; }
+}

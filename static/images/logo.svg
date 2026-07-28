@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">ChatSphere</title>
+  <defs>
+    <linearGradient id="g" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6d8cff"/>
+      <stop offset="1" stop-color="#3558d4"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="18" fill="url(#g)"/>
+  <path d="M15 17h34v25H31l-11 8v-8h-5V17Z" fill="#fff"/>
+  <circle cx="24" cy="30" r="3" fill="#3558d4"/>
+  <circle cx="32" cy="30" r="3" fill="#3558d4"/>
+  <circle cx="40" cy="30" r="3" fill="#3558d4"/>
+</svg>

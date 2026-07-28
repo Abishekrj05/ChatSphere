@@ -1,0 +1,36 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ChatSphere</title>
+    <link rel="icon" type="image/png" href="{% static 'images/chatsphere-favicon.png' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=20260728-13">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}?v=20260728-8">
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}?v=20260728-24">
+    <link rel="stylesheet" href="{% static 'css/ai.css' %}?v=20260727-7">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}?v=20260728-11">
+</head>
+<body class="{% block body_class %}{% endblock %}"
+      {% if user.is_authenticated %}data-desktop-notifications="{{ user.profile.desktop_notifications|yesno:'true,false' }}"
+      data-notification-sounds="{{ user.profile.notification_sounds|yesno:'true,false' }}"
+      data-app-theme="{{ user.profile.app_theme }}" data-chat-theme="{{ user.profile.chat_theme }}"
+      data-chat-wallpaper="{{ user.profile.chat_wallpaper }}"
+      {% if user.profile.custom_chat_wallpaper %}style="--custom-chat-wallpaper: url('{{ user.profile.custom_chat_wallpaper.url }}');"{% endif %}{% endif %}>
+    {% include "navbar.html" %}
+    <main class="page-container">
+        {% include "messages.html" %}
+        {% block content %}{% endblock %}
+    </main>
+    {% include "footer.html" %}
+
+    {% if user.is_authenticated %}
+        <script src="{% static 'js/websocket.js' %}?v=20260727-3"></script>
+        <script src="{% static 'js/notification.js' %}?v=20260728-4"></script>
+        <script src="{% static 'js/profile.js' %}?v=20260727-3"></script>
+        <script src="{% static 'js/messenger-ui.js' %}?v=20260728-10"></script>
+    {% endif %}
+    {% block scripts %}{% endblock %}
+</body>
+</html>
