@@ -74,7 +74,7 @@ DATABASES = {
     'default': dj_database_url.config
     (
         # Replace this value with your local database's connection string.
-        default=os.getenv("DATABASE_URL","postgresql://postgres:postgres@localhost:5432/chat_application")
+        default=os.getenv("DATABASE_URL","postgresql://postgres:postgres@localhost:5432/chat_application"),
         conn_max_age=600
     )
 }
